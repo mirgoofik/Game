@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -17,7 +18,10 @@ import java.util.List;
 public class RecyclerListAdapter extends RecyclerView.Adapter<RecyclerListAdapter.ItemViewHolder>
         implements ItemTouchHelperAdapter {
 
-    private static final int[][] images = new int[][]{};
+    private static final int[][] images = new int[][]{
+        { R.drawable.chrome9, R.drawable.chrome8, R.drawable.chrome7, R.drawable.chrome6, R.drawable.chrome5, R.drawable.chrome4, R.drawable.chrome3, R.drawable.chrome2, R.drawable.chrome1 },
+        { R.drawable.android9, R.drawable.android8, R.drawable.android7, R.drawable.android6, R.drawable.android5, R.drawable.android4, R.drawable.android3, R.drawable.android2, R.drawable.android1 }
+    };
 
     private final List<Integer> mItems = new ArrayList<>();
     private final OnStartDragListener mDragStartListener;
@@ -59,8 +63,8 @@ public class RecyclerListAdapter extends RecyclerView.Adapter<RecyclerListAdapte
 
     @Override
     public void onBindViewHolder(final ItemViewHolder holder, int position) {
-        holder.textView.setText(mItems.get(position));
-        holder.textView.setOnTouchListener(new View.OnTouchListener() {
+        holder.imageView.setImageResource(mItems.get(position));
+        holder.imageView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (MotionEventCompat.getActionMasked(event) ==
@@ -77,6 +81,7 @@ public class RecyclerListAdapter extends RecyclerView.Adapter<RecyclerListAdapte
         if (!isWin(mItems)) {
             return;
         }
+        level = Math.min(images.length - 1, ++level);
         mWinListener.onWin();
     }
 
@@ -100,11 +105,11 @@ public class RecyclerListAdapter extends RecyclerView.Adapter<RecyclerListAdapte
     public static class ItemViewHolder extends RecyclerView.ViewHolder implements
             ItemTouchHelperViewHolder {
 
-        public final TextView textView;
+        public final ImageView imageView;
 
         public ItemViewHolder(View itemView) {
             super(itemView);
-            textView = (TextView) itemView.findViewById(R.id.text);
+            imageView = (ImageView) itemView.findViewById(R.id.imageView);
         }
 
         @Override
