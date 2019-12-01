@@ -1,8 +1,10 @@
 package com.example.game;
 
 import android.graphics.Color;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -21,15 +23,31 @@ public class RecyclerListAdapter extends RecyclerView.Adapter<RecyclerListAdapte
 
     private final List<String> mItems = new ArrayList<>();
     private final OnStartDragListener mDragStartListener;
+    private final OnWinListener mWinListener;
     private static int level = 0;
-    private Button mButton;
 
-    public RecyclerListAdapter(OnStartDragListener dragStartListener) {
-        mDragStartListener = dragStartListener;
+    public RecyclerListAdapter(Fragment fragment) {
+        mDragStartListener = (OnStartDragListener) fragment;
+        mWinListener = (OnWinListener) fragment;
+        resetButton();
         shuffle();
     }
 
+    private void resetButton() {
+        mWinListener.onReset();
+    }
+
     private static boolean isWin(List<String> strings) {
+        return true;
+    }
+
+    public void loadLevel() {
+//        mItems.clear();
+//        for (int i = 0; i < currentLevel.length; i++) {
+//            mItems.add(i, currentLevel[i]);
+//        }
+        Collections.shuffle(mItems);
+        notifyDataSetChanged();
     }
 
     @Override
@@ -67,16 +85,8 @@ public class RecyclerListAdapter extends RecyclerView.Adapter<RecyclerListAdapte
 
     @Override
     public void onItemMove(int fromPosition, int toPosition) {
-        if (fromPosition < toPosition) {
-            for (int i = fromPosition; i < toPosition; i++) {
-                Collections.swap(mItems, i, i + 1);
-            }
-        } else {
-            for (int i = fromPosition; i > toPosition; i--) {
-                Collections.swap(mItems, i, i - 1);
-            }
-        }
-        notifyItemMoved(fromPosition, toPosition);
+        Collections.swap(mItems, fromPosition, toPosition);
+        notifyDataSetChanged();
     }
 
     @Override
