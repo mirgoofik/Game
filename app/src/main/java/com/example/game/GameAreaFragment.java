@@ -2,6 +2,7 @@ package com.example.game;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
@@ -20,6 +21,17 @@ public class GameAreaFragment extends Fragment implements
 
         mButton = view.findViewById(R.id.button);
         adapter = new RecyclerListAdapter(this);
+
+
+        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recycler);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new SimpleGridLayoutManager(getContext(), 3));
+        ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
+
+        ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(adapter);
+        mItemTouchHelper = new ItemTouchHelper(callback);
+        mItemTouchHelper.attachToRecyclerView(recyclerView);
     }
 
     @Override
@@ -34,19 +46,19 @@ public class GameAreaFragment extends Fragment implements
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                onReset();
                 adapter.loadLevel();
             }
         });
     }
 
-    @Override
     public void onReset() {
         mButton.setText("Restart");
         mButton.setBackgroundResource(R.color.colorAccent);
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                adapter.shuffle();
+                adapter.loadLevel();
             }
         });
     }

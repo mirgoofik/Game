@@ -4,24 +4,22 @@ import android.graphics.Color;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 public class RecyclerListAdapter extends RecyclerView.Adapter<RecyclerListAdapter.ItemViewHolder>
         implements ItemTouchHelperAdapter {
 
+    private static final int[][] images = new int[][]{};
 
-    private final List<String> mItems = new ArrayList<>();
+    private final List<Integer> mItems = new ArrayList<>();
     private final OnStartDragListener mDragStartListener;
     private final OnWinListener mWinListener;
     private static int level = 0;
@@ -29,23 +27,25 @@ public class RecyclerListAdapter extends RecyclerView.Adapter<RecyclerListAdapte
     public RecyclerListAdapter(Fragment fragment) {
         mDragStartListener = (OnStartDragListener) fragment;
         mWinListener = (OnWinListener) fragment;
-        resetButton();
-        shuffle();
+        loadLevel();
     }
 
-    private void resetButton() {
-        mWinListener.onReset();
-    }
-
-    private static boolean isWin(List<String> strings) {
-        return true;
+    private static boolean isWin(List<Integer> items) {
+        boolean isWinner = true;
+        for (int i = 0; i < images[level].length; i++) {
+            if (items.get(i) != images[level][i]) {
+                isWinner = false;
+                break;
+            }
+        }
+        return isWinner;
     }
 
     public void loadLevel() {
-//        mItems.clear();
-//        for (int i = 0; i < currentLevel.length; i++) {
-//            mItems.add(i, currentLevel[i]);
-//        }
+        mItems.clear();
+        for (int i = 0; i < images[level].length; i++) {
+            mItems.add(i, images[level][i]);
+        }
         Collections.shuffle(mItems);
         notifyDataSetChanged();
     }
@@ -74,7 +74,10 @@ public class RecyclerListAdapter extends RecyclerView.Adapter<RecyclerListAdapte
 
     @Override
     public void onSelectedChanged() {
-        // win
+        if (!isWin(mItems)) {
+            return;
+        }
+        mWinListener.onWin();
     }
 
     @Override
@@ -92,14 +95,6 @@ public class RecyclerListAdapter extends RecyclerView.Adapter<RecyclerListAdapte
     @Override
     public int getItemCount() {
         return mItems.size();
-    }
-
-    public void shuffle() {
-//        Collections.shuffle();
-//        mItems.clear();
-//        mItems.addAll();
-
-        notifyDataSetChanged();
     }
 
     public static class ItemViewHolder extends RecyclerView.ViewHolder implements
